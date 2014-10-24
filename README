@@ -1,0 +1,110 @@
+About
+=====
+
+DonimoD is an online variant of a Domino game played with Double Six
+tiles and versus computer or human opponent over the Internet with a
+web-browser.
+
+If the game-play is the main concern, then the documentation in the
+actual game is to be read. It includes description of the game, its
+rules and limits.
+
+More detailed documentation than the one for playing is present as
+well. For it, please read on.
+
+Demonstration
+=============
+
+It may be (until 2015-02) tested online at:
+https://donimod.com/
+
+Files
+=====
+
+./doc					documentation directory
+./doc/game-edge-cases			layout of game-play edge cases
+./doc/tiles-match-cases			layout of when tiles matches cases
+./doc/timers				about poor man's cron attempt
+./doc/two-players			client-server communication details
+./src/donimod.sql			MySQL database configuration
+./src					program files directory
+./src/public_html			client and server files directory
+./src/public_html/donimod.css		client style
+./src/public_html/donimod.js		client code
+./src/public_html/donimod.php		server code
+./src/public_html/error.html		error web-page for HTTP 403 and 404
+./src/public_html/error.log		error.php messages log
+./src/public_html/error.php		server error handling code
+./src/public_html/favicon.ico		website icon
+./src/public_html/.htaccess		Apache configuration
+./src/public_html/index.html		program single web-page
+./src/public_html/robots.txt		robot exclusion configuration
+./src/public_html/timers/abusers	time trigger controlling abusers
+./src/public_html/timers/game		time trigger controlling game limits
+./src/public_html/timers		time triggers directory
+
+Configuration
+=============
+
+Server Requirements
+-------------------
+
+The below versions, or probably higher too, would do.
+
+Apache 2.2
+MySQL 5.1
+PHP 5.3
+
+Values to Change
+----------------
+
+The following donimod.php values to be changed:
+define("DB_HOST", "<YOURS>");
+define("DB_USER", "<YOURS>");
+define("DB_PASS", "<YOURS>");
+define("DB_NAME", "<YOURS>");
+
+The following error.php value to be changed:
+define("EMAIL_TO", "email@example.com");
+
+Additionally, .htaccess file should be modified according to specific
+settings of a web server system at hand.
+
+Development
+===========
+
+The source code of the program in src directory is the development
+version: client and server code has settings that are useful for
+development but are not suitable for production. Please view the next
+section how to prepare src for production.
+
+Production
+==========
+
+To prepare the production version of the program, one needs to remove
+everything between the two comment "//DEV//" (without double-quotes)
+lines (and including them).
+
+To do the removal conveniently, one may use Perl script at:
+https://github.com/dntsklm/remove_dev_pairs
+
+With it, the following one-liner, executed at src directory, will
+remove development lines from the files which have them:
+find -type f -exec <remove_dev_pairs.pl path-name> \{\} +
+
+Web-browsers
+============
+
+Old web-browsers, especially proprietary IE9 and below, are not
+supported. Virtually everything else more modern than that
+web-browser, should work.
+
+Copyright
+=========
+
+Copyright © 2014 Donatas Klimašauskas
+
+License
+=======
+
+This program is free software. Its GPLv3+ license is at the COPYING file.

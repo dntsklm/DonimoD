@@ -1,0 +1,55 @@
+Game Edge Cases
+===============
+
+Tested with One (both players) and Two (one player) games.
+
+Full Stock Off
+--------------
+
+Game start
+A puts first
+	B has matching tile
+		Game continues
+	B has no matching tile
+		Game ends
+Game play
+A puts
+	A puts last tile
+		Game ends
+	B has matching tile
+		Game continues
+	B has no matching tile
+		Game ends
+
+Full Stock On
+-------------
+
+Game start
+A puts first
+	Stock has tiles
+		Game continues
+	Stock has no tiles
+		B has matching tile
+			Game continues
+		B has no matching tile
+			Game ends
+Game play
+A puts
+	A puts last tile
+		Game ends
+	Stock has tiles
+		Game continues
+	Stock has no tiles
+		B has matching tile
+			Game continues
+		B has no matching tile
+			Game ends
+Game start and play
+A takes
+	Stock has tiles
+		Game continues
+	Stock has no tiles
+		A has matching tile (at start all are matching)
+			Game continues
+		A has no matching tile
+			Game ends

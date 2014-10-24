@@ -1,0 +1,37 @@
+Timers as Approximate Cron
+==========================
+
+Server includes an attempt to be an approximate "cron" substitute,
+which may be used when there are no other way to schedule a procedure
+in time.
+
+The triggering of a schedule happens as follows. On server execution,
+a timer function is called. It uses a variable, which defines paths to
+timer files and their delay times and callback function names.
+
+Timer function gets timer file modification time. If the time between
+the current time and the file modification time is bigger than the
+delay time, the file modification time is set to the current time and
+the callback function is called.
+
+Time resolution is 1 second.
+
+Since the server code is executed at random times and the process is
+not persistent, the called callback function would detect something
+that it might track within the set delay time plus a second (the
+fastest) and a double of the set delay time or at any later time when
+the server runs (the slowest).
+
+The following is two example diagrams of the fastest and slowest
+detection times, when the callback function is called exactly at every
+delay time expiration. There:
+"C" is the time of a callback function call,
+"S" is the time of the start of something, and
+"D" is the time of detection of the something.
+
+Fastest detection:
+C----------------C----------------C
+		S-----------------D
+Slowest detection:
+C----------------C----------------C
+S---------------------------------D

@@ -1,0 +1,140 @@
+Overview
+========
+
+DonimoD may be played by two players over the Internet. Two players
+playing with each other is a pair. There may be many pairs playing at
+the same time.
+
+DonimoD has a RESTful client-server architecture. No persistent
+connections are created. All communications happen through port 80
+(HTTP) and, thus, firewalls usually should not be an issue.
+
+Communication
+=============
+
+Client requests with URL encoded form data of key-value pairs. Server
+responds with JSON encoded data of key-value pairs.
+
+Keys Shared Between Client and Server
+-------------------------------------
+
+s	game state
+u	unique per GAME string
+f	full stock
+h	harder
+n	numbers
+t	tile to "put" index or no value to "take"
+l	end where to "put" tile
+
+Client Request Keys
+-------------------
+
+a	first player
+b	second player
+
+Server Respond Keys
+-------------------
+
+c	start tiles of "a" or end tiles of "b"
+d	delta time off of game left for player "b"
+p	problem message index for client
+q	player "b" took quantity of tiles
+
+Handshake
+---------
+
+Client sends two player names: one own "a" and opponent's "b".
+Server assembles "ab" and "ba" and checks for their presents.
+If <= 1
+If "ab" present, rejects client request.
+If "ab" not present:
+If "ba" not present, saves "ab" as first player.
+If "ba" present, saves "ab" as second player and starts game logic.
+If > 1
+Server rejects client request.
+
+Game
+----
+
+Client sends "a" and "b" and its "put" or "take" a tile.
+Server checks for two players presents.
+If == 2
+Retrieves their game and checks for accepted action of the player.
+If accepted, performs game logic, updates players and saves game.
+If not accepted, deletes their game and bans them.
+If == 1
+Server deletes the client and bans it.
+If == 0
+Server rejects client request.
+
+Handshake and Game Example
+--------------------------
+
+Handshake phase 0:
+s=0&a=a&b=b&f=1&h=1&n=1 // attempt to handshake
+{"s":0,"p":0} // if there are too many players playing
+{"s":0,"p":1} // if there is "ab" player (or there is > 1)
+{"s":1,"u":"uniqstr"} // in as "a"; waiting for "b"
+
+Handshake phase 1:
+s=1&a=a&b=b&u=uniqstr // ask if handshake is done
+{"s":1} // ask again
+{"s":3,"c":[0,1,2,3,4,5,6]} // "a" player; make first move (decided randomly)
+{"s":3,"c":[0,1,2,3,4,5,6],"t":12} // "b" was first and made first move
+{"s":2,"c":[0,1,2,3,4,5,6],"u":"uniqstr","f":1,"h":1,"n":1,"d":7} // in as "b"
+
+Game phase 0:
+s=3&a=a&b=b&u=uniqstr&t=12&l=0 // make a move
+{"s":2} // tile put; ask again
+{"s":3,"t":21} // took tile; next move
+
+Game phase 1:
+s=2&a=a&b=b&u=uniqstr // ask if other player moved
+{"s":2} // ask again
+{"s":3,"t":12,"l":1} // opponent put tile on left side; you next
+{"s":2,"q":2} // opponent took tiles from stock
+{"s":0,"c":[7,8,9]} // game over; opponent has had these tiles
+
+Limits
+======
+
+Maximum number of players allowed at the same time is 5000. It is
+either 2500 pairs playing, or 2500 players awaiting, or any proportion
+of the two in between. Thus, maximum server load approximately:
+2500 pairs * 2 players * 0.2 reqs/s = 1000 reqs/s
+
+Access log one typical entry has a size of 205 B. At this rate of
+requests, web server would write to access log approximately at this
+rate:
+24 * 60^2 * 1000 * 205 / 2^30 = 16.496 GiB/day
+
+Abuse
+=====
+
+Requester with indication of abusive action is banned for around 24
+hours.  Server stores at the most 10^5 IP addresses of abusers,
+deleting the oldest ones and adding new ones as needed.
+
+Abusive actions while waiting or in game-play:
+* Invalid tile sent: down, hidden, opponent's, non-existing, not due.
+* Issuing requests more frequently than it is foreseen.
+
+Gauges
+======
+
+Event though there is no tracking of users, beyond the one that web
+server logging does, non-identifiable information is gathered.
+Examples of it are given below.
+
+Numbers of:
+* Games played.
+* Full stock games played.
+* Harder games played.
+* Numbers games played.
+Time of:
+* Total waiting.
+* Total playing.
+* Average waiting.
+* Average playing.
+* Shortest game.
+* Longest game.

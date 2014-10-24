@@ -1,0 +1,26 @@
+Tiles Match Cases
+=================
+
+Possible matching tiles end cases and when to ask (decide) for where
+to put a tile:
+
+|1|...|2|	matches == |0|1|
+|0|1| matchingends == 1 dontaskwhereto
+
+|2|...|1|	matches == |1|0|
+|0|1| matchingends == 1 dontaskwhereto
+
+|1|...|1|	matches == |0|1||1|0|
+|0|1| matchingends == 2 doaskwhereto
+
+|1|...|0|	matches == |1|1|
+|1|1| matchingends == 2 dontaskwhereto
+
+|0|...|1|	matches == |1|0||1|0|
+|0|1| matchingends == 2 doaskwhereto
+
+|1|...|0|	matches == |0|1||0|1|
+|0|1| matchingends == 2 doaskwhereto
+
+|1|...|1|	matches == |1|1||1|1||1|1||1|1|
+|1|1| matchingends == 4 doaskwhereto

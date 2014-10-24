@@ -1,0 +1,23 @@
+Options -Indexes
+
+RewriteEngine on
+RewriteBase /
+
+# Uncommented for production server with SSL.
+#RewriteCond %{HTTPS} =off [OR]
+#RewriteCond %{HTTP_HOST} !^donimod\.com [NC]
+#RewriteRule ^(.*) https://donimod.com/$1 [R=301,L]
+
+# Uncommented for development server without SSL.
+RewriteCond %{HTTP_HOST} !^local\.donimod\.com [NC]
+RewriteRule ^(.*) http://local.donimod.com/$1 [R=301,L]
+
+RewriteCond %{REQUEST_URI} =/server
+RewriteRule ^(.+) donimod.php
+
+<Files "*.log">
+	Deny from all
+</Files>
+
+ErrorDocument 403 /error.html
+ErrorDocument 404 /error.html
