@@ -307,8 +307,8 @@ function copy_array(arraytocopy, arraytopaste)
 }
 
 /*
- * Return random integer between minimum and maximum arguments (both
- * included).
+ * Returns random integer between minimum and maximum positive integer
+ * arguments (both included).
  */
 function get_random_int(limmin, limmax)
 {
@@ -316,12 +316,12 @@ function get_random_int(limmin, limmax)
     var randnum;
 
     if (typeof limmin !== "number" || typeof limmax !== "number" ||
-	limmin >= limmax || limmin < 0 || limmax <= 0)
+	limmin >= limmax || (limmin + "" + limmax).match(/\.|-/))
 	return false;
     multexp = Math.pow(10, (limmax + "").length);
     while (true) {
-	randnum = Math.round(Math.random() * multexp % limmax);
-	if (randnum >= limmin && randnum <= limmax)
+	randnum = Math.round(Math.random() * multexp % limmax); // float % int
+	if (randnum >= limmin)
 	    return randnum;
     }
 }
