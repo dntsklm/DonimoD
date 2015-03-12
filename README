@@ -5,6 +5,10 @@ DonimoD is an online variant of a Domino game played with Double Six
 tiles and versus computer or human opponent over the Internet with a
 web-browser.
 
+To play, one does not need to have connection to the Internet. Copy
+the game files to a device, open index.html with web-browser and play
+with computer at any time.
+
 If the game-play is the main concern, then the documentation in the
 actual game is to be read. It includes description of the game, its
 rules and limits.

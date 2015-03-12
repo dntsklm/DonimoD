@@ -71,6 +71,7 @@ var STATE_PLAYERAB_TOOK_PULL = 2;
 var STATE_PLAYERAB_PUT_MOVE = 3;
 var INDEX = "data-index";
 var CTRLS_DISABLED = 1;
+var OPACITY = ".5";
 var T2D_GRID_ELS = 9;
 var T2D_HORIZONTAL = 0;
 var T2D_VERTICAL = 1;
@@ -598,7 +599,7 @@ function change_controls(state)
 {
     if (state === CTRLS_DISABLED) {
 	lid.style.display = "block";
-	controls.style.opacity = ".5";
+	controls.style.opacity = OPACITY;
     } else {
 	lid.style.display = "none";
 	controls.style.opacity = "1";
@@ -657,6 +658,14 @@ function reset_player_ids(player)
 function remove_player_tile(player, choice)
 {
     return player.node.removeChild(player.node.childNodes[choice]);
+}
+
+function confirm_internet_play()
+{
+    if (location.protocol.match(/^http/))
+	return;
+    starttwo.disabled = "disabled";
+    starttwo.style.opacity = OPACITY;
 }
 
 /*
@@ -1653,6 +1662,7 @@ function initiate()
     mend.addEventListener("click", mend_existing_pair, false);
     link.addEventListener("click", add_opponent_link, false);
     starttwo.addEventListener("click", two_start_game, false);
+    confirm_internet_play();
     generate_tiles();
     restore_fragment_names();
     prepare_help_containers();
