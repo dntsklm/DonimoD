@@ -1,8 +1,8 @@
 // @license magnet:?xt=urn:btih:1f739d935676111cfff4b4693e3816e664797050&dn=gpl-3.0.txt GPL-v3-or-Later
 /*
- * DonimoD
+ * DonimoD is Domino game variant played versus computer or human.
  *
- * Copyright © 2014 Donatas Klimašauskas
+ * Copyright © 2014-2015 Donatas Klimašauskas
  *
  * This file is part of DonimoD.
  *

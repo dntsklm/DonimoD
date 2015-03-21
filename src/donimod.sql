@@ -1,6 +1,6 @@
--- DonimoD
+-- DonimoD is Domino game variant played versus computer or human.
 --
--- Copyright © 2014 Donatas Klimašauskas
+-- Copyright © 2014-2015 Donatas Klimašauskas
 --
 -- This file is part of DonimoD.
 --
