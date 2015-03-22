@@ -72,6 +72,7 @@ table {
     z-index: 2;
 }
 button {
+    margin: .5em .2em;
     font-size: 1em;
     box-shadow: 0 0 5px #000;
 }
@@ -184,4 +185,7 @@ button,
 .pipbody,
 .tilemid {
     float: left;
+}
+hr {
+    opacity: .5;
 }

@@ -30,15 +30,15 @@
 //DEV//
 */
 //DEV//
-var HUMAN = "Human";
 var COMPUTER = "Computer";
-var YOU = "You";
+var HUMAN = "Human";
+var UPPER = "Upper";
+var LOWER = "Lower";
 var OPPONENT = "Opponent";
+var YOU = "You";
 var TILE_TOTAL_CNT = 28;
 var TILE_MAX_IND = TILE_TOTAL_CNT - 1;
 var TILE_PIPS = 7;
-var TILE_HUMAN = HUMAN;
-var TILE_COMPUTER = COMPUTER;
 var TILE_HIDDEN = "hidden";
 var TILE_DOWN = "down";
 var TILES_PER_PLAYER = 7;
@@ -103,6 +103,8 @@ var one;
 var two;
 var help;
 var players;
+var current;
+var switched;
 var lastgame;
 var gamestate;
 var play_computer; // stores reference to chosen gaming function
@@ -148,6 +150,7 @@ var matches;
 var matchingends;
 var choiceends = new Array(MATCHING_ENDS);
 var tablecontent;
+var device;
 var mend;
 var link;
 var starttwo;
@@ -163,8 +166,8 @@ var messages = {
     acceptedfirst: "You created the game",
     acceptedsecond: "You joined the game. ",
     chooseend: "Please, choose an end",
+    choosetile: "Please, choose a tile",
     equals: "no one: equals",
-    gameover: "The game is over. Please, choose a game to play again",
     invalidchars: "Please, for names use Latin letters or numbers",
     linked: "Linked. Please, copy and send opponent the link address",
     longgame: "Game was too long. Please, try playing a bit faster",
@@ -183,7 +186,7 @@ var messages = {
 	"A problem was detected. Please, play a bit later",
     ],
     starts: " starts the game",
-    starttwo: "Attempting to start game Two...",
+    starttwo: "Attempting to start...",
     tilewhere: "Where to put the tile?",
     tooktile: "Stock is used",
     turn: ". Your turn",
@@ -338,7 +341,7 @@ function process_game_change(thisgame)
 	counters[counter] = 0;
 	id_(counter).innerHTML = 0;
     }
-    if (thisgame === COMPUTER) {
+    if (thisgame === HUMAN || thisgame === LOWER) {
 	stock.removeEventListener("click", two_give_tile, false);
 	stock.addEventListener("click", one_give_tile, false);
     } else {
@@ -542,10 +545,6 @@ function process_tile_choice(event)
 {
     if (event)
 	stop_event(event);
-    if (gameover) {
-	show_message(messages.gameover);
-	return;
-    }
     if (gamestate !== STATE_PLAYERAB_PUT_MOVE) {
 	show_message(messages.wait);
 	return;
@@ -587,6 +586,7 @@ function make_player_tiles(player, hidden)
     var len = player.tiles.length;
     var tile;
 
+    player.node.innerHTML = "";
     for (var i = 0; i < len; i++) {
 	tile = draw_tile(hidden ? null : tiles[player.tiles[i]].tile,
 			 player.node, T2D_VERTICAL, T2D_LAST, hidden, player);
@@ -606,23 +606,36 @@ function change_controls(state)
     }
 }
 
-function over_game(playera, playerb)
+function switch_players()
 {
-    var playerapips = count_pips(playera.tiles);
-    var playerbpips = count_pips(playerb.tiles);
+    var tmp;
+
+    tmp = players.a;
+    players.a = players.b;
+    players.b = tmp;
+    if (switched)
+	switched = 0;
+    else
+	switched = 1;
+}
+
+function over_game()
+{
+    var playerapips;
+    var playerbpips;
     var winner = messages.winneris;
 
     gameover = 1;
-    if (playerb.tiles.length) {
-	playerb.node.innerHTML = "";
-	make_player_tiles(playerb);
-    }
+    if (switched)
+	switch_players();
+    playerapips = count_pips(players.a.tiles);
+    playerbpips = count_pips(players.b.tiles);
     if (playerapips < playerbpips) {
 	counters.playerawins++;
-	winner += playera.nameshown.innerHTML;
+	winner += players.a.nameshown.innerHTML;
     } else if (playerapips > playerbpips) {
 	counters.playerbwins++;
-	winner += playerb.nameshown.innerHTML;
+	winner += players.b.nameshown.innerHTML;
     } else {
 	winner += messages.equals;
     }
@@ -635,6 +648,8 @@ function over_game(playera, playerb)
     }
     if (harder)
 	counters.playedharder++;
+    make_player_tiles(players.a);
+    make_player_tiles(players.b);
     change_controls();
     show_message(winner + " (" + playerbpips + messages.versus + playerapips +
 		 ")");
@@ -680,11 +695,7 @@ function confirm_internet_play()
  * 66
  * Tile object has `tile' and `state' properties.
  * `tile' refers to array of tile pips on both ends of its face.
- * `state' can be set to one of strings:
- * `hidden' -- tile is not played by any player,
- * `computer' -- tile is held by computer player,
- * `human' -- tile is held by human player,
- * `down' -- tile that has been used.
+ * `state' is one of: `hidden', `down' or name of player who has it.
  */
 function generate_tiles()
 {
@@ -715,6 +726,7 @@ function reset_game(playeraname, playerbname)
     fullstock = controlnodes.fullstock.checked;
     harder = controlnodes.harder.checked;
     numbers = controlnodes.numbers.checked;
+    current = null;
     players.a.who = playeraname;
     players.b.who = playerbname;
     players.a.tiles = [];
@@ -723,20 +735,18 @@ function reset_game(playeraname, playerbname)
     players.b.node.innerHTML = "";
     table.innerHTML = "";
     downends = new Array(MATCHING_ENDS);
-    if (fullstock) {
-	if (playeraname === HUMAN)
+    if (playeraname === HUMAN || playeraname === LOWER) {
+	if (fullstock)
 	    tileshidden = [];
-	else
-	    tileshidden = new Array(PLAYERS_TILES_SUM);
-    }
-    if (playeraname === HUMAN) {
 	for (var i = 0; i < TILE_TOTAL_CNT; i++)
 	    tiles[i].state = TILE_HIDDEN;
-	if (harder) {
+	if (harder && !current) {
 	    ratedpips = new Array(TILE_PIPS);
 	    ratepips = 1;
 	    set_delay_now();
 	}
+    } else if (fullstock) { // playeraname === YOU
+	tileshidden = new Array(PLAYERS_TILES_SUM);
     }
 }
 
@@ -753,10 +763,10 @@ function distribute_tiles()
 	    continue;
 	}
 	if (i % PLAYER_CNT) {
-	    tiles[randint].state = TILE_HUMAN;
+	    tiles[randint].state = players.a.who;
 	    players.a.tiles.push(randint);
 	} else {
-	    tiles[randint].state = TILE_COMPUTER;
+	    tiles[randint].state = players.b.who;
 	    players.b.tiles.push(randint);
 	}
     }
@@ -854,7 +864,7 @@ function one_take_hidden_tile(player)
 	if (!tileshidden.length)
 	    stock.style.display = "none";
     } else {
-	over_game(players.a, players.b);
+	over_game();
 	return;
     }
     if (player.who === players.a.who) {
@@ -862,7 +872,7 @@ function one_take_hidden_tile(player)
 			 T2D_VERTICAL, T2D_LAST, null, players.a);
 	activate_tile(tile, players.a.node.childNodes.length - 1);
 	if (!tileshidden.length && !find_matching_tiles(players.a.tiles)) {
-	    over_game(players.a, players.b);
+	    over_game();
 	    return;
 	}
     } else {
@@ -882,10 +892,14 @@ function one_take_hidden_tile(player)
     //DEV//
 }
 
-function is_game_tied()
+function has_stock_tiles()
 {
-    return !(find_matching_tiles(players.a.tiles) || fullstock &&
-	     tileshidden.length);
+    return fullstock && tileshidden.length;
+}
+
+function is_game_tied(player)
+{
+    return !(find_matching_tiles(player.tiles) || has_stock_tiles());
 }
 
 function one_process_tied_game(player)
@@ -894,10 +908,10 @@ function one_process_tied_game(player)
 	if (fullstock)
 	    one_take_hidden_tile(player);
 	else
-	    over_game(players.a, players.b);
+	    over_game();
     } else {
-	if (is_game_tied())
-	    over_game(players.a, players.b);
+	if (is_game_tied(player))
+	    over_game();
 	else
 	    show_message(messages.nomatchingtile);
     }
@@ -911,6 +925,12 @@ function process_single_matcher()
 {
     if (matches.length === 1)
 	matches.push([matches[0][0], matches[0][1]]);
+}
+
+function arm_player_tiles(player)
+{
+    player.node.addEventListener("click", show_player_tiles, false);
+    current = player;
 }
 
 function one_process_down_tile(player, choice)
@@ -929,21 +949,32 @@ function one_process_down_tile(player, choice)
 	question = 0;
     tilechoice = player.tiles.splice(choice, 1);
     if (!player.tiles.length) {
-	player.node.innerHTML = "";
-	over_game(players.a, players.b);
+	over_game();
     } else if (player.who === players.a.who) {
-	if (harder)
-	    rate_pips(tilechoice, ratedpips);
-	gamestate = STATE_EXIST_END_WAIT;
 	remove_player_tile(players.a, choice);
 	reset_player_ids(players.a);
-	show_message(COMPUTER + messages.next);
-	go_computer();
+	if (current) {
+	    if (is_game_tied(players.b)) {
+		over_game();
+	    } else {
+		make_player_tiles(players.a, HIDDEN);
+		arm_player_tiles(players.b);
+		if (has_stock_tiles())
+		    stock.style.display = "none";
+	    }
+	} else {
+	    gamestate = STATE_EXIST_END_WAIT;
+	    if (harder)
+		rate_pips(tilechoice, ratedpips);
+	    go_computer();
+	}
+	if (!gameover)
+	    show_message(players.b.who + messages.next);
     } else {
 	gamestate = STATE_PLAYERAB_PUT_MOVE;
 	remove_player_tile(players.b, choice);
-	if (is_game_tied()) {
-	    over_game(players.a, players.b);
+	if (is_game_tied(players.a)) {
+	    over_game();
 	} else {
 	    if (harder)
 		set_delay_now();
@@ -1051,13 +1082,18 @@ function prepare_full_stock()
     stock.style.display = "block";
 }
 
-function one_start_game(event)
+function hide_opened()
+{
+    help.style.display = "none";
+    names.style.display = "none";
+}
+
+function computer_start_game(event)
 {
     stop_event(event);
     if (gameover)
 	gameover = 0;
-    help.style.display = "none";
-    names.style.display = "none";
+    hide_opened();
     change_controls(CTRLS_DISABLED);
     reset_game(HUMAN, COMPUTER);
     distribute_tiles();
@@ -1072,7 +1108,7 @@ function one_start_game(event)
     make_players_tiles();
     players.a.nameshown.innerHTML = players.a.who;
     players.b.nameshown.innerHTML = players.b.who;
-    process_game_change(COMPUTER);
+    process_game_change(HUMAN);
     if (get_random_int(0, 1)) {
 	gamestate = STATE_PLAYERAB_PUT_MOVE;
 	counters.playerastarts++;
@@ -1085,7 +1121,7 @@ function one_start_game(event)
 	go_computer();
     }
     //DEV//
-    log("***** one started *****");
+    log("***** computer *****");
     dev__log_player_tiles(players.b);
     //DEV//
 }
@@ -1118,6 +1154,26 @@ function assemble_keys_values(map)
 	keysvalues += key + "=" + value;
     }
     return keysvalues;
+}
+
+function clear_long_game_timers()
+{
+    clearTimeout(timeidgame);
+    clearTimeout(timeidshow);
+    clearTimeout(timeidleft);
+    timeleft.style.display = "none";
+}
+
+function process_problem(problem)
+{
+    xhrs = [];
+    gameover = 1;
+    change_controls();
+    clear_long_game_timers();
+    clearTimeout(timeidpull);
+    names.style.display = "block";
+    starttwo.disabled = "";
+    show_message(problem);
 }
 
 function process_response_error()
@@ -1171,10 +1227,6 @@ function process_taken_tile()
 function two_give_tile(event)
 {
     stop_event(event);
-    if (gameover) {
-	show_message(messages.gameover);
-	return;
-    }
     if (question) {
 	show_message(messages.chooseend);
 	return;
@@ -1195,7 +1247,7 @@ function two_give_tile(event)
 
 function two_process_tied_game(player)
 {
-    if (find_matching_tiles(player.tiles) || fullstock && tileshidden.length) {
+    if (find_matching_tiles(player.tiles) || has_stock_tiles()) {
 	show_message(messages.nomatchingtile);
     } else {
 	gamestate = STATE_PLAYERAB_TOOK_PULL;
@@ -1279,8 +1331,7 @@ function prepare_game(delta)
 	timeidshow = setTimeout(show_time_left, timenote);
 	timeidleft = setTimeout(decrease_time_left, timenote + MINUTE);
     }
-    help.style.display = "none";
-    names.style.display = "none";
+    hide_opened();
     change_controls(CTRLS_DISABLED);
     reset_game(YOU, OPPONENT);
     set_tile_colors();
@@ -1381,26 +1432,6 @@ function process_game_play(inbound)
     }
 }
 
-function clear_long_game_timers()
-{
-    clearTimeout(timeidgame);
-    clearTimeout(timeidshow);
-    clearTimeout(timeidleft);
-    timeleft.style.display = "none";
-}
-
-function process_problem(problem)
-{
-    xhrs = [];
-    gameover = 1;
-    change_controls();
-    clear_long_game_timers();
-    clearTimeout(timeidpull);
-    names.style.display = "block";
-    starttwo.disabled = "";
-    show_message(problem);
-}
-
 function delay_server_pull()
 {
     timeidpull = setTimeout(pull_server_changes, DELAY_PULL);
@@ -1415,7 +1446,7 @@ function process_game_state(inbound)
 	    clear_long_game_timers();
 	    players.b.tiles = inbound.c;
 	    starttwo.disabled = "";
-	    over_game(players.a, players.b);
+	    over_game();
 	} else {
 	    process_problem(messages.problems[inbound.p]);
 	}
@@ -1463,7 +1494,7 @@ function process_long_game()
     process_problem(messages.longgame);
 }
 
-function two_start_game(event)
+function internet_start_game(event)
 {
     stop_event(event);
     if (!are_names_valid())
@@ -1476,7 +1507,7 @@ function two_start_game(event)
     set_delay_now();
     show_message(messages.starttwo);
     //DEV//
-    log("***** two started *****");
+    log("***** internet *****");
     //DEV//
     request_server({
 	s: gamestate,
@@ -1530,6 +1561,55 @@ function rate_tiles(playertiles, ratedpips, ratedtiles, ratedtileslen)
 	    break;
 	}
     return tileind;
+}
+
+function show_player_tiles(event)
+{
+    stop_event(event);
+    current.node.removeEventListener("click", show_player_tiles, false);
+    make_player_tiles(current);
+    if (has_stock_tiles())
+	stock.style.display = "block";
+    if (current.who === players.b.who)
+	switch_players();
+    show_message(messages.choosetile);
+}
+
+function device_start_game(event)
+{
+    stop_event(event);
+    if (gameover)
+	gameover = 0;
+    hide_opened();
+    change_controls(CTRLS_DISABLED);
+    reset_game(LOWER, UPPER);
+    distribute_tiles();
+    if (fullstock)
+	set_stock_gauge();
+    set_tile_colors();
+    process_down_tile = one_process_down_tile;
+    make_player_tiles(players.a, HIDDEN);
+    make_player_tiles(players.b, HIDDEN);
+    players.a.nameshown.innerHTML = players.a.who;
+    players.b.nameshown.innerHTML = players.b.who;
+    process_game_change(LOWER);
+    gamestate = STATE_PLAYERAB_PUT_MOVE;
+    if (get_random_int(0, 1)) {
+	counters.playerastarts++;
+	arm_player_tiles(players.a);
+	show_message(players.a.who + messages.starts);
+    } else {
+	counters.playerbstarts++;
+	arm_player_tiles(players.b);
+	show_message(players.b.who + messages.starts);
+    }
+    //DEV//
+    log("***** device *****");
+    log("Upper hand:");
+    dev__log_player_tiles(players.b);
+    log("Lower hand:");
+    dev__log_player_tiles(players.a);
+    //DEV//
 }
 
 function prepare_help_containers()
@@ -1647,6 +1727,7 @@ function initiate()
     lid = id_("lid");
     stock = id_("stock");
     names = id_("names");
+    device = id_("device");
     mend = id_("mend");
     link = id_("link");
     starttwo = id_("starttwo");
@@ -1657,11 +1738,12 @@ function initiate()
     players.b.nameshown = id_("playerbname");
     players.a.input = id_("playerainput");
     players.b.input = id_("playerbinput");
-    one.addEventListener("click", one_start_game, false);
+    one.addEventListener("click", computer_start_game, false);
     two.addEventListener("click", show_hide_names, false);
+    device.addEventListener("click", device_start_game, false);
     mend.addEventListener("click", mend_existing_pair, false);
     link.addEventListener("click", add_opponent_link, false);
-    starttwo.addEventListener("click", two_start_game, false);
+    starttwo.addEventListener("click", internet_start_game, false);
     confirm_internet_play();
     generate_tiles();
     restore_fragment_names();

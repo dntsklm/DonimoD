@@ -6,8 +6,9 @@ playing with each other is a pair. There may be many pairs playing at
 the same time.
 
 DonimoD has a RESTful client-server architecture. No persistent
-connections are created. All communications happen through port 80
-(HTTP) and, thus, firewalls usually should not be an issue.
+connections are created. All communications happen through port 80 or
+443 (HTTP or HTTPS accordingly) and, thus, firewalls usually should
+not be an issue.
 
 Communication
 =============

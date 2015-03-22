@@ -35,10 +35,10 @@
       DonimoD
       <div class="helpdescription">
 	<span id="sitedescription"></span>.<br><br>
-	You may play with computer, game <strong>One</strong>, or a human, game <strong>Two</strong>. The latter means two players over the Internet (if DonimoD server is set up).<br><br>
+	You may play with computer, game <strong>One</strong>, or a human, game <strong>Two</strong>. The latter means either two players on the same device or over the Internet (if DonimoD is hosted).<br><br>
 	General <strong>rules</strong> are as follows. You may play with minimum set of tiles only (seven for each player) or with a full stock. The game may be made more difficult with all tiles white (computer plays harder). Starting player is determined by random choice and may put down any tile (or take a tile from stock, when played with all of them). On further moves, moving player may put only a matching tile, i.e., the one with the same number of pips as the end of the already downed tile of choice, at the either end. Who ever empties hand the first is the <strong>winner</strong>. If the game has blocked, the winner is a player with the smaller number of pips. If both players have the same number of pips when game stops – equals.<br><br>
 	Have fun!<br><br><br>
-	<strong>Note</strong> that words with shadowed text (i.e., DonimoD, Full stock, Harder, Numbers, Game for, Player names), when pushed, opens a description, like this one. To hide the description, push again.<br><br>
+	<strong>Note</strong> that words with shadowed text (i.e., DonimoD, Full stock, Harder, Numbers, Game for, Play with this, Player names), when pushed, opens a description, like this one. To hide the description, push again.<br><br>
 	<strong>Tip</strong> on browsers. If tiles are not properly displayed, please, try setting the Numbers option and play with tiles represented as pairs of digits instead of pips. This could be apt for a small display as well. If you can use any major current browser, like Mozilla Firefox, please, do.<br><br><br>
 	Copyright © 2014-2015 Donatas Klimašauskas, <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPLv3+</a>
       </div>
@@ -71,21 +71,34 @@
 	  Game for
 	  <div class="helpdescription">
 	    <strong>One</strong> button will start the game with the computer opponent player. It is great for getting familiar with the rules, practice, and fast game play.<br><br>
-	    <strong>Two</strong> button will lead to the game for two human players somewhere on the Internet. No registration is required. Just enter your and your friend's names in the Player names box, which will appear after pushing the Two button, and hit Play.
+	    <strong>Two</strong> button will let you play the game with your friend by sharing the same device or through the Internet.<br><br>
+	    To play through the Internet, no registration is required. Just enter your and your friend's names in the Player names boxes, which will appear after pushing the Two button, and push Play.
 	  </div>
 	</span>
 	<button id="one">One</button>
 	<button id="two">Two</button><br>
 	<div id="names">
 	  <span class="helpcontainer active">
+	    Play with this
+	    <div class="helpdescription">
+	      By using the same device to play the game with your friend, you are getting closer to the experience with the physical tiles. There is no need for Internet connection.<br><br>
+	      Before starting, decide among you two which one is the upper player and which one is the lower player. The layout seen in the screen and textual hints will help.<br><br>
+	      At the beginning of the game, all tiles will be hidden. Read the hint that will tell you who-upper or lower-player is randomly picked to make the first move.<br><br>
+	      E.g., if you two have decided that the upper player is you and the hint tells that you are the starting player, push your upper tiles to turn them over to see their pips (and be sure that your friend does not see them too). Choose a tile and push it to place it on the table. When you will do this, your tiles will be hidden again. Now it is time to give the device to your friend.<br><br>
+	      You two are playing like this till the winner emerges.
+	    </div>
+	  </span>
+	  <button id="device">Device</button>
+	  <hr>
+	  <span class="helpcontainer active">
 	    Player names
 	    <div class="helpdescription">
 	      The player names are comprised from Latin letters or numbers and are used for game set up and only during the game. If it happens that somebody is already playing with names that you and your opponent have chosen, just try to change yours to slightly different one, or your opponent could do that and inform you, or you may use mending.<br><br>
 	      Pushing the <strong>Mend</strong> button will add an underscore and some letters to the names. This should guarantee that when you will push the Play button, game will successfully start. You may do your own mending as well. Nothing after the first underscore, including it, will be shown in game play results table.<br><br>
-	      Pushing the <strong>Link</strong> button, after typing in names or mending, will give you a link with an address that you may send to your opponent for easy and quick game set up between you two. Otherwise, your opponent should enter the same names, i.e., your opponent's and your names in the appropriate boxes and hit Play.<br><br>
+	      Pushing the <strong>Link</strong> button, after typing in names or mending, will give you a link with an address that you may send to your opponent for easy and quick game set up between you two. Otherwise, your opponent should enter the same names, i.e., your opponent's and your names in the appropriate boxes and push Play.<br><br>
 	      Pushing the <strong>Play</strong> button, with names ready, will attempt to set up and start a game between you and your opponent. Who ever starts the game first, decides what other options the game will have.<br><br>
 	      The whole game should not last longer than 15 minutes (including the time for opponent to join the game).<br><br>
-	      Names may be saved, so that the next time the game is opened with the web browser you would not have to write them again. Enter the names, hit Play and bookmark the address of the game. Your opponent would do the same.
+	      Names may be saved, so that the next time the game is opened with the web browser you would not have to write them again. Enter the names, push Play and bookmark the address of the game. Your opponent would do the same.
 	    </div>
 	  </span>
 	  <table>
@@ -140,9 +153,10 @@
 	</table>
       </div>
       <div id="message">
-	Welcome! Push DonimoD (atop) for description<br>
-	Press One to play Domino with computer<br>
-	Press Two to play Domino over Internet
+	Welcome! To the Domino game variant!<br>
+	Push DonimoD (atop) for description.<br>
+	Push One to play with computer or<br>
+	Two to play with a friend.
       </div>
       <div id="timeleft">
 	Time left: less than <span></span> min

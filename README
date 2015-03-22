@@ -1,13 +1,21 @@
 About
 =====
 
-DonimoD is an online variant of a Domino game played with Double Six
-tiles and versus computer or human opponent over the Internet with a
-web-browser.
+Briefly
+-------
+
+DonimoD is Domino game variant played versus computer or human.
+
+Fully
+-----
+
+DonimoD is a variant of a Domino game played with Double Six tiles
+versus computer or human opponent on the same device or the Internet
+with a web-browser.
 
 To play, one does not need to have connection to the Internet. Copy
-the game files to a device, open index.html with web-browser and play
-with computer at any time.
+the game files to a device, open index.html with a web-browser and
+play with computer or nearby friend at any time.
 
 If the game-play is the main concern, then the documentation in the
 actual game is to be read. It includes description of the game, its
@@ -21,9 +29,9 @@ Files
 
 ./doc					documentation directory
 ./doc/game-edge-cases			layout of game-play edge cases
+./doc/internet-players			client-server communication details
 ./doc/tiles-match-cases			layout of when tiles matches cases
 ./doc/timers				about poor man's cron attempt
-./doc/two-players			client-server communication details
 ./src/donimod.sql			MySQL database configuration
 ./src					program files directory
 ./src/public_html			client and server files directory
@@ -76,6 +84,13 @@ version: client and server code has settings that are useful for
 development but are not suitable for production. Please view the next
 section how to prepare src for production.
 
+In donimod.js code, the function prefix "one" refers to one device
+used to play. This is the case for games with computer opponent or
+human opponent with whom the single device is shared to play. The
+function prefix "two" refers to two devices which players use to play
+with each other through the Internet (or any network within which the
+DonimoD server is hosted).
+
 Production
 ==========
 
@@ -100,9 +115,14 @@ web-browser, should work.
 Copyright
 =========
 
-Copyright © 2014 Donatas Klimašauskas
+Copyright © 2014-2015 Donatas Klimašauskas
 
 License
 =======
 
-This program is free software. Its GPLv3+ license is at the COPYING file.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
+
+Full license is at the COPYING file.
