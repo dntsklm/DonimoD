@@ -72,6 +72,8 @@ var STATE_PLAYERAB_PUT_MOVE = 3;
 var INDEX = "data-index";
 var CTRLS_DISABLED = 1;
 var OPACITY = ".5";
+var EMPTY = null;
+var FIRST = 0;
 var T2D_GRID_ELS = 9;
 var T2D_HORIZONTAL = 0;
 var T2D_VERTICAL = 1;
@@ -366,21 +368,21 @@ function get_text_tile(tile)
     return "|" + tile.join("|") + "|";
 }
 
-function draw_text_tile(tile, hidden, color)
+function draw_text_tile(tile, color)
 {
     var tiletext = ce_("span");
 
     tiletext.className = "tiletext";
-    if (hidden)
-	tiletext.innerHTML = "|X|X|";
-    else
+    if (tile)
 	tiletext.innerHTML = get_text_tile(tile);
+    else
+	tiletext.innerHTML = "|X|X|";
     if (color)
 	tiletext.style.color = color;
     return tiletext;
 }
 
-function draw_t2d_tile(tile, node, vertical, last, hidden, color)
+function draw_t2d_tile(tile, node, vertical, last, color)
 {
     var tilebody = ce_("div");
     var tileend;
@@ -395,7 +397,7 @@ function draw_t2d_tile(tile, node, vertical, last, hidden, color)
 	tilebody.className += " tbhorizontal";
     if (color)
 	tilebody.style.borderColor = color;
-    if (hidden)
+    if (!tile)
 	return tilebody;
     for (var i = 0; i < MATCHING_ENDS; i++) {
 	tileend = ce_("div");
@@ -438,15 +440,15 @@ function show_tiles()
     showtiles = 0;
 }
 
-function draw_tile(tile, node, vertical, last, hidden, player)
+function draw_tile(tile, node, vertical, last, player)
 {
     var tilebody;
     var color = player.node.style.color;
 
     if (numbers)
-	tilebody = draw_text_tile(tile, hidden, color);
+	tilebody = draw_text_tile(tile, color);
     else
-	tilebody = draw_t2d_tile(tile, node, vertical, last, hidden, color);
+	tilebody = draw_t2d_tile(tile, node, vertical, last, color);
     if (last)
 	node.appendChild(tilebody);
     else
@@ -533,7 +535,7 @@ function put_tile_where(matcher, player)
     tablecontent = table.innerHTML;
     matcher.style.margin = WHICH_END_MARGIN;
     for (var i = 0; i < MATCHING_ENDS; i++) {
-	tile = draw_tile(matches[i], table, T2D_HORIZONTAL, i, null, player);
+	tile = draw_tile(matches[i], table, T2D_HORIZONTAL, i, player);
 	tile.style.margin = WHICH_END_MARGIN;
 	activate_tile(tile, i, WHICH_END);
     }
@@ -588,8 +590,8 @@ function make_player_tiles(player, hidden)
 
     player.node.innerHTML = "";
     for (var i = 0; i < len; i++) {
-	tile = draw_tile(hidden ? null : tiles[player.tiles[i]].tile,
-			 player.node, T2D_VERTICAL, T2D_LAST, hidden, player);
+	tile = draw_tile(hidden ? EMPTY : tiles[player.tiles[i]].tile,
+			 player.node, T2D_VERTICAL, T2D_LAST, player);
 	if (!hidden && !gameover)
 	    activate_tile(tile, i);
     }
@@ -869,15 +871,14 @@ function one_take_hidden_tile(player)
     }
     if (player.who === players.a.who) {
 	tile = draw_tile(tiles[tilehiddenind].tile, players.a.node,
-			 T2D_VERTICAL, T2D_LAST, null, players.a);
+			 T2D_VERTICAL, T2D_LAST, players.a);
 	activate_tile(tile, players.a.node.childNodes.length - 1);
 	if (!tileshidden.length && !find_matching_tiles(players.a.tiles)) {
 	    over_game();
 	    return;
 	}
     } else {
-	draw_tile(tiles[tilehiddenind].tile, players.b.node, T2D_VERTICAL,
-		  T2D_LAST, HIDDEN, players.b);
+	draw_tile(EMPTY, players.b.node, T2D_VERTICAL, T2D_LAST, players.b);
 	if (harder) {
 	    rate_pips([tilehiddenind], ratedpips);
 	    set_delay_now();
@@ -944,7 +945,7 @@ function one_process_down_tile(player, choice)
     tiles[player.tiles[choice]].state = TILE_DOWN;
     process_single_matcher();
     downends[last] = matches[last][last];
-    draw_tile(matches[last], table, T2D_HORIZONTAL, last, null, player);
+    draw_tile(matches[last], table, T2D_HORIZONTAL, last, player);
     if (question)
 	question = 0;
     tilechoice = player.tiles.splice(choice, 1);
@@ -1259,7 +1260,7 @@ function set_down_ends(player)
 {
     process_single_matcher();
     downends[last] = matches[last][last];
-    draw_tile(matches[last], table, T2D_HORIZONTAL, last, null, player);
+    draw_tile(matches[last], table, T2D_HORIZONTAL, last, player);
 }
 
 function two_process_down_tile(player, choice, inbound)
@@ -1287,7 +1288,7 @@ function two_process_down_tile(player, choice, inbound)
 	show_message(messages.waitingmove);
     } else {
 	player.tiles.pop();
-	remove_player_tile(players.b, 0);
+	remove_player_tile(players.b, choice);
 	find_matching_ends(inbound.t);
 	last = inbound.l;
 	if (gamestart)
@@ -1398,11 +1399,11 @@ function two_take_hidden_tile(player, tilehiddenind)
     player.tiles.push(tilehiddenind);
     if (player.who === players.a.who) {
 	tile = draw_tile(tiles[tilehiddenind].tile, player.node, T2D_VERTICAL,
-			 T2D_LAST, null, player);
+			 T2D_LAST, player);
 	activate_tile(tile, player.node.childNodes.length - 1);
     } else {
 	process_taken_tile();
-	draw_tile(null, player.node, T2D_VERTICAL, T2D_LAST, HIDDEN, player);
+	draw_tile(EMPTY, player.node, T2D_VERTICAL, T2D_LAST, player);
     }
 }
 
@@ -1426,7 +1427,7 @@ function process_game_play(inbound)
     }
     if ("t" in inbound) {
 	if ("l" in inbound)
-	    two_process_down_tile(players.b, null, inbound);
+	    two_process_down_tile(players.b, FIRST, inbound);
 	else
 	    two_take_hidden_tile(players.a, inbound.t);
     }
