@@ -64,6 +64,8 @@ var MATCHING_ENDS_MAX = 4;
 var HIDDEN = 1;
 var WHICH_END = 1;
 var WHICH_END_MARGIN = "0 1em";
+var JSON_START = "{";
+var NOT_SETUP = 1;
 var HTTP_DONE = 4;
 var STATE_EXIST_END_WAIT = 0;
 var STATE_PLAYERA_PULL = 1;
@@ -175,6 +177,7 @@ var messages = {
     longgame: "Game was too long. Please, try playing a bit faster",
     mended: "Mended",
     moved: " moved",
+    connectionlack: "Cannot connect. Please, use other game modes",
     connectionlost: "Connection is lost. Please, try to restart",
     connectionslow: "Connection is too slow. Please, play tad later",
     nomatchingtile: "No matching tile was selected",
@@ -677,9 +680,9 @@ function remove_player_tile(player, choice)
     return player.node.removeChild(player.node.childNodes[choice]);
 }
 
-function confirm_internet_play()
+function confirm_internet_play(notsetup)
 {
-    if (location.protocol.match(/^http/))
+    if (!notsetup && location.protocol.match(/^http/))
 	return;
     starttwo.disabled = "disabled";
     starttwo.style.opacity = OPACITY;
@@ -1484,8 +1487,14 @@ function process_server_response()
     for (var i = 0; i < len; i++)
 	log("Response:\t" + xhrs[i].responseText);
     //DEV//
-    for (var i = 0; i < len; i++)
+    for (var i = 0; i < len; i++) {
+	if (xhrs[i].responseText.charAt(0) !== JSON_START) {
+	    process_problem(messages.connectionlack);
+	    confirm_internet_play(NOT_SETUP);
+	    return;
+	}
 	process_game_state(JSON.parse(xhrs[i].responseText));
+    }
     xhrs = [];
 }
 
