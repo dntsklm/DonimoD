@@ -42,6 +42,7 @@ var TILE_PIPS = 7;
 var TILE_HIDDEN = "hidden";
 var TILE_DOWN = "down";
 var TILES_PER_PLAYER = 7;
+var PRNG_MAX = 65535;
 var MEND_BREAK = "_";
 var CHAR_A = 65;
 var CHAR_Z = 90;
@@ -111,6 +112,7 @@ var current;
 var switched;
 var lastgame;
 var gamestate;
+var get_random_int_typed; // stores crypto grade or insecure PRNG function
 var play_computer; // stores reference to chosen gaming function
 var process_down_tile; // stores game type specific task function
 var ratedpips;
@@ -315,24 +317,33 @@ function copy_array(arraytocopy, arraytopaste)
     return true;
 }
 
+function get_random_int_crypto()
+{
+    return crypto.getRandomValues(new Uint16Array(1))[0];
+}
+
+function get_random_int_insecure(max)
+{
+    return Math.round(Math.random() * Math.pow(10, (max + "").length));
+}
+
 /*
  * Returns random integer between minimum and maximum positive integer
  * arguments (both included).
  */
 function get_random_int(limmin, limmax)
 {
-    var multexp;
-    var randnum;
+    var offset;
 
     if (typeof limmin !== "number" || typeof limmax !== "number" ||
-	limmin >= limmax || (limmin + "" + limmax).match(/\.|-/))
+	limmin >= limmax || limmax > PRNG_MAX ||
+	(limmin + "" + limmax).match(/\.|-/))
 	return false;
-    multexp = Math.pow(10, (limmax + "").length);
-    while (true) {
-	randnum = Math.round(Math.random() * multexp % limmax); // float % int
-	if (randnum >= limmin)
-	    return randnum;
-    }
+    offset = limmin;
+    limmin = 0;
+    limmax += 1; // int % int
+    limmax -= offset;
+    return get_random_int_typed(limmax) % limmax + offset;
 }
 
 function process_game_change(thisgame)
@@ -1716,6 +1727,20 @@ function extract_meta_description()
 	}
 }
 
+function select_entropy_generator()
+{
+    if (window.crypto)
+	get_random_int_typed = get_random_int_crypto;
+    else
+	get_random_int_typed = get_random_int_insecure;
+    //DEV//
+    if (window.crypto)
+	log("PRNG: crypto");
+    else
+	log("PRNG: insecure");
+    //DEV//
+}
+
 function initiate()
 {
     if (window.atob)
@@ -1759,6 +1784,7 @@ function initiate()
     restore_fragment_names();
     prepare_help_containers();
     extract_meta_description();
+    select_entropy_generator();
 }
 
 window.addEventListener("load", initiate, false);
