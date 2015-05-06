@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<!--
+    DonimoD is Domino game variant played versus computer or human.
+
+    Copyright © 2014-2015 Donatas Klimašauskas
+
+    This file is part of DonimoD.
+
+    DonimoD is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    DonimoD is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with DonimoD.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="application-name" content="DonimoD">
+    <meta name="author" content="Donatas Klimašauskas">
+    <meta name="description" content="DonimoD is a variant of a Domino game played with Double Six tiles and versus computer or human opponent">
+    <meta name="keywords" content="domino, donimod, double, six, game">
+    <title>DonimoD - Domino Multiplayer Game</title>
+    <link rel="stylesheet" type="text/css" href="donimod.css">
+    <script type="text/javascript" src="donimod.js"></script>
+  </head>
+  <body>
+    <h1 id="header" class="helpcontainer">
+      DonimoD
+      <div class="helpdescription">
+	<span id="sitedescription"></span>.<br><br>
+	You may play with computer, game <strong>One</strong>, or a human, game <strong>Two</strong>. The latter means either two players on the same device or over the Internet (if DonimoD is hosted).<br><br>
+	General <strong>rules</strong> are as follows. You may play with minimum set of tiles only (seven for each player) or with a full stock. The game may be made more difficult with all tiles white (computer plays harder). Starting player is determined by random choice and may put down any tile (or take a tile from stock, when played with all of them). On further moves, moving player may put only a matching tile, i.e., the one with the same number of pips as the end of the already downed tile of choice, at the either end. Who ever empties hand the first is the <strong>winner</strong>. If the game has blocked, the winner is a player with the smaller number of pips. If both players have the same number of pips when game stops – equals.<br><br>
+	Have fun!<br><br><br>
+	<strong>Note</strong> that words with shadowed text (i.e., DonimoD, Full stock, Harder, Numbers, Game for, Play with this, Player names), when pushed, opens a description, like this one. To hide the description, push again.<br><br>
+	<strong>Tip</strong> on browsers. If tiles are not properly displayed, please, try setting the Numbers option and play with tiles represented as pairs of digits instead of pips. This could be apt for a small display as well. If you can use any major current browser, like Mozilla Firefox, please, do.<br><br><br>
+	Copyright © 2014-2015 Donatas Klimašauskas, <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank">GPLv3+</a>
+      </div>
+    </h1>
+    <noscript>
+      To play the Domino game, please, enable <a href="https://en.wikipedia.org/wiki/Javascript" target="_blank">JavaScript</a>
+    </noscript>
+    <div id="browsernotfit">
+      To play the Domino game, please, use any major current <a href="https://en.wikipedia.org/wiki/Web_browser" target="_blank">browser</a>
+    </div>
+    <div id="main">
+      <div id="controls">
+	<div id="lid"></div>
+	<span class="helpcontainer active">
+	  Full stock
+	  <div class="helpdescription">Play with full Domino stock</div>
+	</span>
+	<input id="fullstock" type="checkbox">
+	<span class="helpcontainer active">
+	  Harder
+	  <div class="helpdescription">All tiles are of the same color. Computer plays harder</div>
+	</span>
+	<input id="harder" type="checkbox">
+	<span class="helpcontainer active">
+	  Numbers
+	  <div class="helpdescription">Tiles are represented as numbers</div>
+	</span>
+	<input id="numbers" type="checkbox"><br>
+	<span class="helpcontainer active">
+	  Game for
+	  <div class="helpdescription">
+	    <strong>One</strong> button will start the game with the computer opponent player. It is great for getting familiar with the rules, practice, and fast game play.<br><br>
+	    <strong>Two</strong> button will let you play the game with your friend by sharing the same device or through the Internet.<br><br>
+	    To play through the Internet, no registration is required. Just enter your and your friend's names in the Player names boxes, which will appear after pushing the Two button, and push Play.
+	  </div>
+	</span>
+	<button id="one">One</button>
+	<button id="two">Two</button><br>
+	<div id="names">
+	  <span class="helpcontainer active">
+	    Play with this
+	    <div class="helpdescription">
+	      By using the same device to play the game with your friend, you are getting closer to the experience with the physical tiles. There is no need for Internet connection.<br><br>
+	      Before starting, decide among you two which one is the upper player and which one is the lower player. The layout seen in the screen and textual hints will help.<br><br>
+	      At the beginning of the game, all tiles will be hidden. Read the hint that will tell you who-upper or lower-player is randomly picked to make the first move.<br><br>
+	      E.g., if you two have decided that the upper player is you and the hint tells that you are the starting player, push your upper tiles to turn them over to see their pips (and be sure that your friend does not see them too). Choose a tile and push it to place it on the table. When you will do this, your tiles will be hidden again. Now it is time to give the device to your friend.<br><br>
+	      You two are playing like this till the winner emerges.
+	    </div>
+	  </span>
+	  <button id="device">Device</button>
+	  <hr>
+	  <span class="helpcontainer active">
+	    Player names
+	    <div class="helpdescription">
+	      The player names are comprised from Latin letters or numbers and are used for game set up and only during the game. If it happens that somebody is already playing with names that you and your opponent have chosen, just try to change yours to slightly different one, or your opponent could do that and inform you, or you may use mending.<br><br>
+	      Pushing the <strong>Mend</strong> button will add an underscore and some letters to the names. This should guarantee that when you will push the Play button, game will successfully start. You may do your own mending as well. Nothing after the first underscore, including it, will be shown in game play results table.<br><br>
+	      Pushing the <strong>Link</strong> button, after typing in names or mending, will give you a link with an address that you may send to your opponent for easy and quick game set up between you two. Otherwise, your opponent should enter the same names, i.e., your opponent's and your names in the appropriate boxes and push Play.<br><br>
+	      Pushing the <strong>Play</strong> button, with names ready, will attempt to set up and start a game between you and your opponent. Who ever starts the game first, decides what other options the game will have.<br><br>
+	      The whole game should not last longer than 15 minutes (including the time for opponent to join the game).<br><br>
+	      Names may be saved, so that the next time the game is opened with the web browser you would not have to write them again. Enter the names, push Play and bookmark the address of the game. Your opponent would do the same.
+	    </div>
+	  </span>
+	  <table>
+	    <tr>
+	      <td>You</td>
+	      <td><input id="playerainput" type="text" maxlength="25"></td>
+	    </tr>
+	    <tr>
+	      <td>Opponent</td>
+	      <td><input id="playerbinput" type="text" maxlength="25"></td>
+	    </tr>
+	  </table><br>
+	  <button id="mend">Mend</button>
+	  <button id="link">Link</button>
+	  <button id="starttwo">Play</button>
+	</div>
+      </div>
+      <div id="counters">
+	<table>
+	  <tr>
+	    <td>Player</td>
+	    <td>Starts</td>
+	    <td>Wins</td>
+	    <td>Pips</td>
+	  </tr>
+	  <tr>
+	    <td id="playerbname">X</td>
+	    <td id="playerbstarts">X</td>
+	    <td id="playerbwins">X</td>
+	    <td id="playerbpips">X</td>
+	  </tr>
+	  <tr>
+	    <td id="playeraname">X</td>
+	    <td id="playerastarts">X</td>
+	    <td id="playerawins">X</td>
+	    <td id="playerapips">X</td>
+	  </tr>
+	</table>
+	<table>
+	  <tr>
+	    <td>Games</td>
+	    <td id="playedgames">X</td>
+	  </tr>
+	  <tr>
+	    <td>Full stock</td>
+	    <td id="playedfullstock">X</td>
+	  </tr>
+	  <tr>
+	    <td>Harder</td>
+	    <td id="playedharder">X</td>
+	  </tr>
+	</table>
+      </div>
+      <div id="message">
+	Welcome! To the Domino game variant!<br>
+	Push DonimoD (atop) for description.<br>
+	Push One to play with computer or<br>
+	Two to play with a friend.
+      </div>
+      <div id="timeleft">
+	Time left: less than <span></span> min
+      </div>
+      <div id="tiles">
+	<div id="playerbhand"></div>
+	<br>
+	<div id="table"></div>
+	<br>
+	<div id="playerahand"></div>
+      </div>
+      <div id="stock" class="active">
+	Take a tile. Left in stock: <span></span>
+      </div>
+    </div>
+  </body>
+</html>

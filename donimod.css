@@ -1,0 +1,191 @@
+/*
+ * DonimoD is Domino game variant played versus computer or human.
+ *
+ * Copyright © 2014-2015 Donatas Klimašauskas
+ *
+ * This file is part of DonimoD.
+ *
+ * DonimoD is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * DonimoD is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with DonimoD.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+* {
+    font-family: arial, sans-serif, monospace;
+}
+body {
+    margin: 0;
+    padding: 0;
+    color: #fff;
+    text-align: center;
+}
+a {
+    color: inherit;
+}
+#header {
+    margin-top: 0;
+    text-shadow: 0 0 20px #000;
+}
+#main {
+    font-size: 16px;
+}
+#message,
+#timeleft {
+    margin: 1em 0;
+}
+#controls {
+    position: relative;
+    margin: 1em 0;
+}
+#lid {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+table {
+    display: inline-table;
+}
+#stock {
+    margin: 1em auto;
+}
+#help {
+    position: absolute;
+    left: 50%;
+    padding: .5em;
+    max-width: 400px;
+    min-width: 100px;
+    text-align: left;
+    box-shadow: 0 0 10px #000;
+    border-radius: 10px;
+    z-index: 2;
+}
+button {
+    margin: .5em .2em;
+    font-size: 1em;
+    box-shadow: 0 0 5px #000;
+}
+input {
+    border: 1px solid #fff;
+}
+#names {
+    margin: 0 auto;
+    padding: .5em;
+    width: 260px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 10px #000;
+    background-color: #888;
+}
+td:first-child {
+    float: right;
+}
+#tiles span {
+    font-family: monospace;
+}
+button,
+input {
+    color: inherit;
+    background-color: inherit;
+    border-radius: 5px;
+}
+button,
+.active {
+    text-shadow: 0 0 5px #000;
+}
+body,
+#help {
+    background-color: #888;
+}
+button,
+#tiles {
+    font-weight: bold;
+}
+#playerainput,
+#playerbinput {
+    width: 95%;
+}
+#lid,
+#stock,
+#help,
+.helpdescription,
+#names,
+#timeleft {
+    display: none;
+}
+#tiles span,
+.tilebody {
+    display: inline-block;
+}
+.tiletext,
+.tilebody {
+    opacity: 0;
+    transition: opacity cubic-bezier(0, .5, .5, 1) 1s;
+}
+.tilebody {
+    background-color: #000;
+    border: 2px solid #fff;
+}
+.tbvertical {
+    width: 40px;
+    height: 82px;
+}
+.tbhorizontal {
+    width: 82px;
+    height: 40px;
+}
+.tileend {
+    width: 36px;
+    height: 36px;
+}
+.pipbody {
+    width: 12px;
+    height: 12px;
+}
+.pip {
+    width: 8px;
+    height: 8px;
+}
+.tilemid {
+    border-radius: 1px;
+}
+.tmvertical {
+    width: 32px;
+    height: 2px;
+    margin: 0 4px;
+}
+.tmhorizontal {
+    width: 2px;
+    height: 32px;
+    margin: 4px 0;
+}
+.tilebody,
+.pip {
+    border-radius: 4px;
+}
+.tileend,
+.pip {
+    margin: 2px;
+}
+.pip,
+.tilemid {
+    background-color: #fff;
+}
+.tileend,
+.pipbody,
+.tilemid {
+    float: left;
+}
+hr {
+    opacity: .5;
+}
